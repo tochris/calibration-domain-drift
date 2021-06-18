@@ -65,11 +65,12 @@ The python source code for all the class systems implemented in this project.
 If you find this library useful please consider citing our paper:
 
 @inproceedings{tomani2021domaindriftcalibration,
-  author={Zhang, Jize and Kailkhura, Bhavya and Han, T},
-  booktitle={International Conference on Machine Learning (ICML)},
-  title = {Mix-n-Match: Ensemble and Compositional Methods for Uncertainty Calibration in Deep Learning},
-  year = {2020},
-}
+    author = "Christian Tomani and Sebastian Gruber and Muhammed Ebrar Erdem and Daniel Cremers and Florian Buettner",
+    title = "Post-hoc Uncertainty Calibration for Domain Drift Scenarios",
+    booktitle = cvpr,
+    year = "2021",
+    award = "Oral Presentation"
+  } 
 
 ## References:
 
