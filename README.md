@@ -1,6 +1,6 @@
 # Post-hoc Uncertainty Calibration for Domain Drift Scenarios
 
-This repository contains code for running the post-hoc tuning method for domain drift scenarios introduced in "C. Tomani, S. Gruber, M. Erdem, D. Cremers and F. Buettner, Post-hoc Uncertainty Calibration for Domain Drift Scenarios, CVPR 2021 (Accepted - Oral)".
+This repository contains code for running the post-hoc tuning method for domain drift scenarios introduced in "C. Tomani, S. Gruber, M. Erdem, D. Cremers and F. Buettner, Post-hoc Uncertainty Calibration for Domain Drift Scenarios, CVPR 2021 (Accepted - Oral)". [[Paper]](https://arxiv.org/abs/2012.10988)
 
 
 ## Datasets
@@ -63,15 +63,15 @@ The python source code for all the class systems implemented in this project.
 ## Citation:
 
 If you find this library useful please consider citing our paper:
-
+```
 @inproceedings{tomani2021domaindriftcalibration,
     author = "Christian Tomani and Sebastian Gruber and Muhammed Ebrar Erdem and Daniel Cremers and Florian Buettner",
     title = "Post-hoc Uncertainty Calibration for Domain Drift Scenarios",
     booktitle = cvpr,
     year = "2021",
     award = "Oral Presentation"
-  } 
-
+  }
+```
 ## References:
 
 Chuan Guo, Geoff Pleiss, Yu Sun, and Kilian Q. Weinberger. On calibration of modern neural networks. In Proceedings of the 34th International Conference on Machine Learning Volume 70, pages 1321–1330. JMLR. org, 2017.
