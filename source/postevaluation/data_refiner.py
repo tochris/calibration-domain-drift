@@ -14,11 +14,11 @@ def get_accuracy(gauss_eps, *args):
     Calculates accuracy for a given level of perturbation (=epsilon) based on
     the dataset provided through dataset_name. Applies gaussian perturbation
     to the samples in the dataset according to the given level of perturbation.
-    The accuracy is calculated from the perturbed datset and the resulting
+    The accuracy is calculated from the perturbed dataset and the resulting
     predictions of the model.
 
     Args:
-        epsilon: float, level of gaussian perturbation
+        gauss_eps: float, level of gaussian perturbation
         (*args) modelf: object from class ModelFactory
         (*args) data: tf.data.Dataset object (x_data, y_labels), prepared with
             batch_size, shuffle etc.
@@ -54,7 +54,7 @@ def optmize_accuracy(epsilons, *args):
     """
     Function that is used in the nelder mead optimizer.
     Args:
-        epsilon: float, level of gaussian perturbation
+        epsilons: float, level of gaussian perturbation
         (*args) target_accuracy: float
         (*args) modelf: object from class ModelFactory
         (*args) data: tf.data.Dataset object (x_data, y_labels), prepared with
@@ -98,7 +98,7 @@ def estimate_epsilons(
             between target accuracy and calcualted accuracy based on level of
             perturbation for the lowest accuracy
         gauss_eps_start: float, starting value for level of perturbation in optimization
-    !    opt_delta_gauss_eps: float ????
+        opt_delta_gauss_eps: float: nonzdelt parameter in optimization
 
     Return:
         optimized_epsilons: list [float], optimized levels of perturbation (=epsilons)
@@ -164,7 +164,7 @@ def store_epsilons(
         modelf: object from class ModelFactory
         data: tf.data.Dataset object (x_data, y_labels), prepared with
             batch_size, shuffle etc.
-        dataset_name: string
+        data_name: string
         filename: string, e.g."optimized_epsilons"
     """
 

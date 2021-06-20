@@ -19,11 +19,11 @@ class CIFAR10:
 
         self.shuffle_buffer = shuffle_buffer
         self.train_batch_size = train_batch_size
-        if valid_batch_size == None:
+        if valid_batch_size is None:
             self.valid_batch_size = train_batch_size
         else:
             self.valid_batch_size = valid_batch_size
-        if test_batch_size == None:
+        if test_batch_size is None:
             self.test_batch_size = train_batch_size
         else:
             self.test_batch_size = test_batch_size

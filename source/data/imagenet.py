@@ -20,7 +20,7 @@ class Imagenet:
             model="ResNet50",
             **kwargs
     ):
-        '''
+        """
         load IMAGENET2012 dataset (BGR, minus mean, center crop) and prepare it
         as a tf.data object.
         Args:
@@ -34,8 +34,7 @@ class Imagenet:
         data_path: string, path to corrupted imagenet dataset
         download: bool, True if dataset is downloaded
         model: string, model name (determines preprocessing)
-        '''
-
+        """
         self.data_name = "IMAGENET"
         self.data_path = data_path
         self.download = download

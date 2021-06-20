@@ -3,55 +3,37 @@ from matplotlib import pyplot as plt
 import os
 
 
-# Input: probability_vec_test_list: array of the max class prediction probability of a sample
-
-#       match_vec_test_list: array with two values {0,1} which indicates whether the sample was predicted correctly {1} or incorrectly {0}
-
-#       bins_limits: list of the limits between the bins
-
-# Ouput: binned_probability_vec_test: mean class probability of each bin
-
-#       binned_accuracy_vec_test: mean accuracy of each bin
-
 def calculate_binned_prob_acc_list(probability_list, match_list, bins_limits):
-    # print('SHAPEP:',np.shape(probability_list))
+    """
 
-    # print('SHAPEM:',np.shape(match_list))
-
+    :param probability_list: array of the max class prediction probability of a sample
+    :param match_list: array with two values {0,1} which indicates whether the sample was predicted correctly {1}
+    or incorrectly {0}
+    :param bins_limits: list of the limits between the bins
+    :return:
+        - binned_probability_vec_test: mean class probability of each bin
+        - binned_accuracy_vec_test: mean accuracy of each bin
+    """
     binned_probability_list = np.zeros(np.shape(bins_limits)[0] + 1)
-
     binned_accuracy_list = np.zeros(np.shape(bins_limits)[0] + 1)
-
     binplace = np.digitize(probability_list, bins_limits, right=True)  # Returns which bin an array element belongs to
 
     for bin_num in range(0, np.shape(bins_limits)[0] + 1):
-
         if bin_num in binplace:
             binned_probability_list[bin_num] = np.mean(np.array(probability_list)[np.where(binplace == bin_num)])
-
             binned_accuracy_list[bin_num] = np.mean(np.array(match_list)[np.where(binplace == bin_num)])
-
-    # print('probability_list:', probability_list[:500])
-
-    # print('binned_probability_list:', binned_probability_list)
-
-    # print('binned_accuracy_list:', binned_accuracy_list)
 
     return binned_probability_list, binned_accuracy_list
 
 
 # Expected Calibration Error - ECE
-
 def calculate_expected_calibration_error(binned_probability_vec, binned_accuracy_vec, probability_list, bins_limits):
     frequency_in_bins_list = np.zeros(np.shape(bins_limits)[0] + 1)
-
     binplace = np.digitize(probability_list, bins_limits, right=True)  # Returns which bin an array element belongs to
 
     for bin_num in range(0, np.shape(bins_limits)[0] + 1):
-
         if bin_num in binplace:
             frequency_in_bins_list[bin_num] = np.shape(np.array(probability_list)[np.where(binplace == bin_num)])[0]
-
     ece = np.sum((frequency_in_bins_list / np.sum(frequency_in_bins_list)) * np.absolute(
         np.array(binned_accuracy_vec) - np.array(binned_probability_vec)))
 
@@ -59,11 +41,9 @@ def calculate_expected_calibration_error(binned_probability_vec, binned_accuracy
 
 
 # Positive Expected Calibration Error - ECE
-
 def calculate_pos_neg_expected_calibration_error(binned_probability_vec, binned_accuracy_vec, probability_list,
                                                  bins_limits):
     frequency_in_bins_list = np.zeros(np.shape(bins_limits)[0] + 1)
-
     binplace = np.digitize(probability_list, bins_limits, right=True)  # Returns which bin an array element belongs to
 
     for bin_num in range(0, np.shape(bins_limits)[0] + 1):
@@ -121,9 +101,6 @@ def calibration_bar_chart(
     plt.close()
 
 
-# Input: probability_vec_test_list: array of the max class prediction probability of a sample
-#       bins_limits: list of the limits between the bins
-# Ouput: print histogram of frequency in bins
 def frequency_over_calibration(
         probability_list,
         bins_limits,
@@ -135,6 +112,18 @@ def frequency_over_calibration(
         ylabel='frequency',
         write_to_txtfile_Bool=True
 ):
+    """
+
+    :param probability_list: array of the max class prediction probability of a sample
+    :param bins_limits: list of the limits between the bins
+    :param scale_param:
+    :param title:
+    :param xlabel:
+    :param ylabel:
+    :param write_to_txtfile_Bool:
+    :return:
+        prints histogram of frequency in bins
+    """
     frequency_in_bins_list = np.zeros(np.shape(bins_limits)[0] + 1)
     binplace = np.digitize(probability_list, bins_limits, right=True)  # Returns which bin an array element belongs to
 
@@ -158,8 +147,8 @@ def frequency_over_calibration(
     plt.close()
 
 
-# Input: class_probability_list: class prediction probability of samples (2D-array with shape (number_of_samples,number_of_classes))
-# Ouput: print histogram of sorted mean probabilities of each class
+# Input: class_probability_list:
+# Ouput:
 def class_probabilities(
         class_probability_list,
         # savefolder,
@@ -169,6 +158,16 @@ def class_probabilities(
         ylabel='mean probability',
         write_to_txtfile_Bool=True
 ):
+    """
+
+    :param class_probability_list: class prediction probability of samples (2D-array with shape (number_of_samples,number_of_classes))
+    :param title:
+    :param xlabel:
+    :param ylabel:
+    :param write_to_txtfile_Bool:
+    :return:
+        print histogram of sorted mean probabilities of each class
+    """
     # sort class probability list from highest predicted probability to lowest
 
     class_probability_list = np.mean(np.sort(class_probability_list)[:, ::-1], axis=0)

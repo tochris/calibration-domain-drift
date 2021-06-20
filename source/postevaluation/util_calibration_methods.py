@@ -2,7 +2,6 @@
 """
 adapted and changed from: author: Jize Zhang
 """
-
 import numpy as np
 from scipy import optimize
 from sklearn.isotonic import IsotonicRegression
@@ -15,7 +14,7 @@ auxiliary functions for optimizing the temperature (scaling approaches) and weig
 
 
 def mse_t(t, *args):
-    ## find optimal temperature with MSE loss function
+    # find optimal temperature with MSE loss function
 
     logit, label = args
     logit = logit / t
@@ -26,7 +25,7 @@ def mse_t(t, *args):
 
 
 def ll_t(t, *args):
-    ## find optimal temperature with Cross-Entropy loss function
+    # find optimal temperature with Cross-Entropy loss function
 
     logit, label = args
     logit = logit / t
@@ -38,7 +37,7 @@ def ll_t(t, *args):
 
 
 def mse_w(w, *args):
-    ## find optimal weight coefficients with MSE loss function
+    # find optimal weight coefficients with MSE loss function
 
     p0, p1, p2, label = args
     p = w[0] * p0 + w[1] * p1 + w[2] * p2
@@ -48,7 +47,7 @@ def mse_w(w, *args):
 
 
 def ll_w(w, *args):
-    ## find optimal weight coefficients with Cros-Entropy loss function
+    # find optimal weight coefficients with Cros-Entropy loss function
 
     p0, p1, p2, label = args
     p = (w[0] * p0 + w[1] * p1 + w[2] * p2)
@@ -58,7 +57,7 @@ def ll_w(w, *args):
 
 
 def mse_w_entropy(w, *args):
-    ## find optimal weight coefficients with MSE loss function
+    # find optimal weight coefficients with MSE loss function
 
     p0, p1, p2, p3, label = args
     p = w[0] * p0 + w[1] * p1 + w[2] * p2 + w[3] * p3
@@ -68,7 +67,7 @@ def mse_w_entropy(w, *args):
 
 
 def ll_w_entropy(w, *args):
-    ## find optimal weight coefficients with Cros-Entropy loss function
+    # find optimal weight coefficients with Cros-Entropy loss function
 
     p0, p1, p2, p3, label = args
     p = (w[0] * p0 + w[1] * p1 + w[2] * p2 + w[3] * p3)
@@ -90,7 +89,7 @@ def mse_w_ts_entropy(w, *args):
 
 
 def ll_w_ts_entropy(w, *args):
-    ## find optimal weight coefficients with Cros-Entropy loss function
+    # find optimal weight coefficients with Cros-Entropy loss function
     logit, label, t, entropy = args
     t_ent = t + w[0] * (entropy - w[1])
     t_ent = np.resize(t_ent, (np.shape(t_ent)[0], 1))
@@ -101,7 +100,7 @@ def ll_w_ts_entropy(w, *args):
     return ce
 
 
-##### Ftting Temperature Scaling
+# Ftting Temperature Scaling
 def train_temperature_scaling(logit, label, loss):
     bnds = ((0.05, 5.0),)
     if loss == 'ce':
@@ -114,7 +113,7 @@ def train_temperature_scaling(logit, label, loss):
     return t
 
 
-##### Fitting Enseble Temperature Scaling
+# Fitting Enseble Temperature Scaling
 def util_ensemble_temperature_scaling(logit, label, t, n_class, loss):
     p1 = softmax(logit, axis=1)
     logit = logit / t
@@ -137,7 +136,7 @@ def util_ensemble_temperature_scaling(logit, label, t, n_class, loss):
     return w
 
 
-##### Fitting Enseble Temperature Scaling
+# Fitting Enseble Temperature Scaling
 def util_ensemble_temperature_scaling_entropy(logit, label, t, n_class, loss):
     p1 = softmax(logit, axis=1)
     logit = logit / t
@@ -201,7 +200,7 @@ def train_temperature_scaling_entropy(logit, label, n_class, loss):
     return (t, w)
 
 
-##### Fitting: Isotonic Regression (Multi-class)
+# Fitting: Isotonic Regression (Multi-class)
 def train_isotonic_regression(logits, labels):
     p = softmax(logits, axis=1)
     ir = IsotonicRegression(out_of_bounds='clip')
@@ -215,7 +214,7 @@ def train_temperature_scaling_isotonic_regression(logits, labels, loss):
     return (t, ir)
 
 
-##### Fitting: Isotonic Regression One vs all
+# Fitting: Isotonic Regression One vs all
 def train_irova(logits, labels):
     p = softmax(logits, axis=1)
     list_ir = []
@@ -226,7 +225,7 @@ def train_irova(logits, labels):
     return list_ir
 
 
-##### Fitting: Isotonic Regression One vs all + TS
+# Fitting: Isotonic Regression One vs all + TS
 def train_irovats(logits, labels, loss="mse"):
     t = train_temperature_scaling(logits, labels, loss=loss)
     logits = logits / t
@@ -241,14 +240,14 @@ Output: calibrated prediction probabilities
 """
 
 
-##### Calibration: Temperature Scaling
+# Calibration: Temperature Scaling
 def calibrate_temperature_scaling(logits, t):
     logits = logits / t
     p = softmax(logits, axis=1)
     return p
 
 
-##### Calibration: Ensemble Temperature Scaling
+# Calibration: Ensemble Temperature Scaling
 def calibrate_ensemble_temperature_scaling(logits, t, w, n_class):
     p1 = softmax(logits, axis=1)
     logits = logits / t
@@ -258,7 +257,7 @@ def calibrate_ensemble_temperature_scaling(logits, t, w, n_class):
     return p
 
 
-##### Calibration: Ensemble Temperature Scaling - Entropy
+# Calibration: Ensemble Temperature Scaling - Entropy
 def calibrate_ensemble_temperature_scaling_entropy(logits, t, w, n_class):
     p1 = softmax(logits, axis=1)
     logits = logits / t
@@ -270,6 +269,7 @@ def calibrate_ensemble_temperature_scaling_entropy(logits, t, w, n_class):
     return p
 
 
+# Calibration: Temperature Scaling - Entropy
 def calibrate_temperature_scaling_entropy(logits, t, w, n_class):
     p0 = softmax(logits, axis=1)
     entropy = np.abs(np.sum(np.multiply(p0, np.clip(np.log(p0), -1e20, 1e20)), axis=1))
@@ -280,7 +280,7 @@ def calibrate_temperature_scaling_entropy(logits, t, w, n_class):
     return p
 
 
-##### Calibration: Isotonic Regression (Multi-class)
+# Calibration: Isotonic Regression (Multi-class)
 def calibrate_isotonic_regression(logits, ir):
     p_eval = softmax(logits, axis=1)
     yt_ = ir.predict(p_eval.flatten())
@@ -294,7 +294,7 @@ def calibrate_temperature_scaling_isotonic_regression(logits, t, ir):
     return p
 
 
-##### Calibrate irova
+# Calibrate IROVA
 def calibrate_irova(logits, list_ir):
     p_eval = softmax(logits, axis=1)
     for ii in range(p_eval.shape[1]):
@@ -303,7 +303,7 @@ def calibrate_irova(logits, list_ir):
     return p_eval
 
 
-##### Calibrate irova + TS
+# Calibrate IROVA + TS
 def calibrate_irovats(logits, t, list_ir):
     logits = logits / t
     p_eval = calibrate_irova(logits, list_ir)

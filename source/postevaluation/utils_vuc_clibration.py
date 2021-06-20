@@ -248,9 +248,8 @@ class PlattBinnerMarginalCalibrator:
         return calibrated_probs
 
 
-###############
-#### UTILS ####
-###############
+
+# UTILS
 import bisect
 from typing import List, Tuple, NewType, TypeVar
 import numpy as np
@@ -603,8 +602,6 @@ def normal_debiased_ce(binned_data: BinnedData, power=1, resamples=1000) -> floa
     resampled_ces = []
     for i in range(resamples):
         label_samples = np.random.normal(loc=label_means, scale=label_stddev)
-        # TODO: we can also correct the bias for the model_vals, although this is
-        # smaller.
         diffs = np.power(np.abs(label_samples - model_vals), power)
         cur_ce = np.power(np.dot(bin_probs, diffs), 1.0 / power)
         resampled_ces.append(cur_ce)

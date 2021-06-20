@@ -1,5 +1,5 @@
 """
-Adpted from:
+Adopted from:
 https://github.com/scipy/scipy/optimize/optimize.py (11-22-2020)
 """
 
@@ -13,12 +13,14 @@ def wrap_function(function, args):
     ncalls = [0]
     if function is None:
         return ncalls, None
+
     def function_wrapper(*wrapper_args):
         ncalls[0] += 1
         return function(*(wrapper_args + args))
     return ncalls, function_wrapper
 
 
+# noinspection PyChainedComparisons
 def minimize_neldermead(func, x0, args=(), tol_abs=0.02, nonzdelt=0.5,
                         callback=None,
                         maxiter=None, maxfev=None, disp=False,

@@ -29,7 +29,7 @@ class Objectnet:
                 'only_imagenet': only 104 classes that are also included in imagenet
                 'not_imagenet': 200 classes that are not included in imagenet
         test_batch_size: int
-        image_size: int, image size (hight and width) after preprocessing
+        image_size: int, image size (height and width) after preprocessing
         padding: 32, padding when preprocessing
         seed: 0, seed for training (if zero, random seed is chosen)
         data_path: string, path to corrupted imagenet dataset
@@ -224,7 +224,6 @@ class Objectnet:
         self.train_steps_per_epoch = math.floor(self.nb_train_sampels / float(self.test_batch_size))
         self.valid_steps_per_epoch = math.floor(self.nb_valid_sampels / float(self.test_batch_size))
         self.test_steps_per_epoch = math.floor(self.nb_test_sampels / float(self.test_batch_size))
-
 
         def distorted_bounding_box_crop(image,
                                         bbox,

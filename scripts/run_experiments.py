@@ -72,8 +72,8 @@ def run_experiment(settings):
     elif data_name in ["Imagenet", "Objectnet_not_imagenet", "Objectnet_only_imagenet"]:
         n_classes = 1000
 
-    if tuning_perturb == True:
-        #calculate number of perturbation levels
+    if tuning_perturb:
+        # calculate number of perturbation levels
         if perturb_levels == 1:
             tuning_eps = [0]
         elif perturb_levels > 1:
@@ -81,20 +81,20 @@ def run_experiment(settings):
         else:
             ValueError: "perturb_levels must be > 0!"
 
-        #adjust parameters for data sets and models
-        #(depending on respective preprocessing of data)
+        # adjust parameters for data sets and models
+        # (depending on respective preprocessing of data)
         if data_name in ["Imagenet", "Objectnet_not_imagenet", "Objectnet_only_imagenet"]:
-            if model_class in ["DenseNet169","Xception","MobileNetV2"]:
+            if model_class in ["DenseNet169", "Xception", "MobileNetV2"]:
                 gauss_eps_start = 0.0005
                 opt_delta_gauss_eps = 0.5
-            if model_class in ["ResNet50","ResNet152","VGG19","EfficientNetB7"]:
+            if model_class in ["ResNet50", "ResNet152", "VGG19", "EfficientNetB7"]:
                 gauss_eps_start = 0.1
                 opt_delta_gauss_eps = 0.5
         else:
             gauss_eps_start = 0.1
             opt_delta_gauss_eps = 0.5
 
-        #optimize levels of perturbation (=epsilons)
+        # optimize levels of perturbation (=epsilons)
         epsilons = data_refiner.estimate_epsilons(
             modelf,
             dataset_valid.valid_ds,
@@ -106,14 +106,14 @@ def run_experiment(settings):
             opt_delta_gauss_eps=opt_delta_gauss_eps
         )
 
-        #initialize perturbation generator with opimal levels of perturbation
+        # initialize perturbation generator with opimal levels of perturbation
         perturb_generator = PerturbationGenerator(
             dataset=dataset_test,
             dataset_name=data_name,
             gaussian_noise_eps=epsilons
         )
 
-        #store levels of perturbation
+        # store levels of perturbation
         store_epsilons(
             model_path,
             epsilons, modelf,
@@ -123,7 +123,7 @@ def run_experiment(settings):
         )
 
     else:
-        #initialize perturbation generator without opimal levels of perturbation
+        # initialize perturbation generator without opimal levels of perturbation
         perturb_generator = PerturbationGenerator(
             dataset=dataset_test,
             dataset_name=data_name
@@ -191,7 +191,7 @@ def load_modelf_dataset(model_class,
                         path_data_objectnet=None,
                         path_data_imagenet_corrupted=None,
                         **kwarg):
-    '''
+    """
     Load model factory and dataset
     Args:
         model_class: string, e.g. ResNet50
@@ -204,7 +204,7 @@ def load_modelf_dataset(model_class,
             batch_size, shuffle etc.
         data_test: tf.data.Dataset object (x_data, y_labels), prepared with
             batch_size, shuffle etc.
-    '''
+    """
     if data_name == "CIFAR":
         data_valid = data_test = cifar10.CIFAR10(train_batch_size=100)
     elif data_name == "Imagenet":
@@ -228,11 +228,12 @@ def load_modelf_dataset(model_class,
     elif data_name in ["Objectnet_not_imagenet", "Objectnet_only_imagenet"]:
         load_logits = False
     modelf = ModelFactory(model_class, save_path_general=model_path,
-                                      data_corrupted_path=path_data_imagenet_corrupted)
+                          data_corrupted_path=path_data_imagenet_corrupted)
     modelf.load(bool_load=model_load, load_path=model_path, load_logits=load_logits)
     modelf.save()
 
     return modelf, data_valid, data_test
+
 
 def ifValueNotNone(default, value):
     """Helper function for argument parser"""
@@ -241,13 +242,15 @@ def ifValueNotNone(default, value):
     else:
         return default
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate models")
     parser.add_argument("-settings", nargs="?", help="settings e.g. IMAGENET_ResNet50_OOD_GN")
     parser.add_argument("-calib_models", nargs="?", help="calib_models e.g. TSModel,ETSModel")
     parser.add_argument("--folder_path_save", nargs="?",
                         help="path where the model is stored e.g. ../results/Calibration_ood")
-    parser.add_argument("--perturb_levels", type=int, nargs="?", help="number of perturbation levels (incl. level where epsilon=0)")
+    parser.add_argument("--perturb_levels", type=int, nargs="?",
+                        help="number of perturbation levels (incl. level where epsilon=0)")
     parser.add_argument("--path_data_imagenet", nargs="?", help="path to ImageNet dataset")
     parser.add_argument("--path_data_objectnet", nargs="?", help="path to ObjectNet dataset")
     parser.add_argument("--path_data_imagenet_corrupted", nargs="?", help="path to corrupted ImageNet dataset")
@@ -263,7 +266,7 @@ if __name__ == "__main__":
 
     # Models that are used
     models_cms_obj_list = []
-    if models_cms != None:
+    if models_cms is not None:
         if "BaseModel" in models_cms: models_cms_obj_list.append(BaseModel())
         if "TSModel" in models_cms: models_cms_obj_list.append(TSModel())
         if "TSModel" in models_cms: models_cms_obj_list.append(TSModel())
@@ -321,31 +324,31 @@ if __name__ == "__main__":
         "IMAGENET_ResNet50_InD": {
             "model_class": "ResNet50",
             "model_path": folder_path_save,  # path to classifier
-            "model_load": False, # whether the post-hoc tuning model should be loaded
+            "model_load": False,  # whether the post-hoc tuning model should be loaded
             "data_name": "Imagenet",
             "cms": [BaseModel(), TSModel(), TSModel(), ETSModel(), IRMModel(),
                     IROVAModel(), IROVATSModel()],
             "tuning_perturb": False,
-            "perturb_levels": perturb_levels, #number of pertrubation levels (epsilons)
+            "perturb_levels": perturb_levels,  # number of pertrubation levels (epsilons)
             "perturbations": perturbations_imagenet,
             "test_name": "test_ds",
             "folder_path_save": ifValueNotNone("../results/Calibration_indomain", folder_path_save),
-            "path_data_imagenet":path_data_imagenet,
-            "path_data_objectnet":path_data_objectnet,
-            "path_data_imagenet_corrupted":path_data_imagenet_corrupted
+            "path_data_imagenet": path_data_imagenet,
+            "path_data_objectnet": path_data_objectnet,
+            "path_data_imagenet_corrupted": path_data_imagenet_corrupted
         },
 
         ###Gaussian Noise Training
         "IMAGENET_ResNet50_OOD_GN": {
             "model_class": "ResNet50",
             "model_path": folder_path_save,  # path to classifier
-            "model_load": False, # whether the post-hoc tuning model should be loaded
+            "model_load": False,  # whether the post-hoc tuning model should be loaded
             "data_name": "Imagenet",
             "cms": [BaseModel(), TSModel(), TSModel(), ETSModel(), IRMModel(),
                     IROVAModel(), IROVATSModel()],
             "tuning_perturb": True,
             "perturbations": perturbations_imagenet,
-            "perturb_levels": perturb_levels, #number of pertrubation levels (epsilons)
+            "perturb_levels": perturb_levels,  # number of pertrubation levels (epsilons)
             "test_name": "test_ds",
             "folder_path_save": ifValueNotNone("../results/Calibration_gaussian", folder_path_save),
             "path_data_imagenet": path_data_imagenet,
@@ -360,13 +363,14 @@ if __name__ == "__main__":
     print("--------------------------")
     print("INITIALIZATION SUCCESSFUL.")
     print("--------------------------")
-    #print("Exp-Settings", experiment_settings.items())
-    #print("Chosen Settings: ", settings)
+    # print("Exp-Settings", experiment_settings.items())
+    # print("Chosen Settings: ", settings)
     chosen_settings = experiment_settings[settings]
+    # noinspection PySimplifyBooleanCheck
     if models_cms_obj_list != []:
         chosen_settings["cms"] = models_cms_obj_list
-    #print('models_cms_obj_list: ', models_cms_obj_list)
-    #print(chosen_settings)
+    # print('models_cms_obj_list: ', models_cms_obj_list)
+    # print(chosen_settings)
     print("Chosen Settings: ", chosen_settings)
     run_experiment(chosen_settings)
 

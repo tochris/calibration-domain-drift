@@ -6,9 +6,11 @@ import source.data.imagenet_corrupted as imagenet_corrupted
 from tensorflow.python.ops import array_ops
 
 
+# noinspection PyDictCreation
 class PerturbationGenerator:
-    """Class that handels perturbation of data."""
+    """Class that handles perturbation of data."""
 
+    # noinspection PyDictCreation
     def __init__(self, dataset_name='Imagenet', gaussian_noise_eps=None, **kwargs):
         """
         Set perturbation parameters
@@ -92,8 +94,6 @@ class PerturbationGenerator:
                                    "imagenet2012_corrupted/spatter",
                                    "imagenet2012_corrupted/speckle_noise"]
 
-        #self.param_ids = list(locals().keys())
-
     def possible_epsilons(self, perturb_type):
         """
         Return all possible epsilons
@@ -146,8 +146,6 @@ class PerturbationGenerator:
         Returns perturbed data batch
         Args:
             X: array, input data batch
-            dataset: tf.data.Dataset object (x_data, y_labels), prepared with
-                batch_size, shuffle etc.
             perturb_type: string, type of data perturbation
             epsilon: int, level of perturbation
             model: tf.keras.model, classifier model

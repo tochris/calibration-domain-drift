@@ -16,9 +16,8 @@ class Evaluator:
 
     def __init__(self):
         self.storage = pd.DataFrame(
-            columns = ["Loss_type", "Index", "Perturbation", "Epsilon", "Value"]
+            columns=["Loss_type", "Index", "Perturbation", "Epsilon", "Value"]
         )
-
 
     def add(self, loss_type, perturbation, epsilon, values):
         """
@@ -41,10 +40,10 @@ class Evaluator:
 
         self.storage = pd.concat(
             [self.storage, to_append],
-            ignore_index = True
+            ignore_index=True
         )
 
-    def save(self, path = "./", file = "evaluator_storage.pkl", with_csv=False):
+    def save(self, path="./", file="evaluator_storage.pkl", with_csv=False):
         """
         Method to save the evaluation storage object.
         :param path: string, directory path of where the target is located
@@ -58,11 +57,11 @@ class Evaluator:
             # safe each loss type as csv for additional readability
             for lt in set(self.storage.Loss_type):
                 df = self.storage
-                df.loc[df.Loss_type==lt].to_csv(path + lt + ".csv")
+                df.loc[df.Loss_type == lt].to_csv(path + lt + ".csv")
 
         save_obj(self.storage, path, file)
 
-    def load(self, path = "./", file = "evaluator_storage.pkl"):
+    def load(self, path="./", file="evaluator_storage.pkl"):
         """
         Method to load the evaluation storage object from a file.
         :param path: string, directory path of where the target is located
@@ -84,55 +83,55 @@ class Evaluator:
     def mean(self, Loss_type=None, Perturbation=None, Epsilon=None, Index=None):
         df = self.storage
         if Loss_type is not None:
-            df = df.loc[df.Loss_type==Loss_type]
+            df = df.loc[df.Loss_type == Loss_type]
 
         if Perturbation is not None:
-            df = df.loc[df.Perturbation==Perturbation]
+            df = df.loc[df.Perturbation == Perturbation]
 
         if Epsilon is not None:
-            df = df.loc[df.Epsilon==Epsilon]
+            df = df.loc[df.Epsilon == Epsilon]
 
         if Index is not None:
-            df = df.loc[df.Index==Index]
+            df = df.loc[df.Index == Index]
 
         return df.Value.mean()
 
     def micro_avg_ece(
-        self,
-        Perturbation=None,
-        bins_limits=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-        ):
+            self,
+            Perturbation=None,
+            bins_limits=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    ):
 
         df = self.storage
         assert "confidence_scores" in set(df.Loss_type)
         assert "matches" in set(df.Loss_type)
 
         if Perturbation is not None:
-            df = df.loc[df.Perturbation==Perturbation]
+            df = df.loc[df.Perturbation == Perturbation]
 
         binned_prob, binned_acc = calib.calculate_binned_prob_acc_list(
-            df[df.Loss_type=="confidence_scores"].Value,
-            df[df.Loss_type=="matches"].Value,
+            df[df.Loss_type == "confidence_scores"].Value,
+            df[df.Loss_type == "matches"].Value,
             bins_limits
         )
 
         return calib.calculate_expected_calibration_error(
             binned_prob,
             binned_acc,
-            df[df.Loss_type=="confidence_scores"].Value,
+            df[df.Loss_type == "confidence_scores"].Value,
             bins_limits
         )
 
     def generate_lineplots(
-        self, perturbation=None, loss_type=None, path="./"
+            self, perturbation=None, loss_type=None, path="./"
     ):
         """
         Creates a nested dictionary of seaborn plot objects
         based on the storage data frame.
         The figures are additionally stored in a folder system.
-        :param x_axis: String, column name used for the x axis
-        :param y_axis: String, column name used for the y axis
         :param perturbation: String, name of the perturbation to select on
+        :param loss_type: String or list, name or list of names of the loss type to select on
+        :param path: String, path to save the generated plots
         :return: Nested dictionary of seaborn plot objects,
         first level: perturbation types, second level: loss types
         """
@@ -157,8 +156,8 @@ class Evaluator:
 
             # calculating the plot limits
             loss_data = self.storage.loc[
-                (self.storage["Loss_type"] == loss), :
-            ]
+                        (self.storage["Loss_type"] == loss), :
+                        ]
             loss_min = loss_data.min()["Value"]
             loss_max = loss_data.max()["Value"]
             border = 0.05 * (loss_max - loss_min)
@@ -166,14 +165,14 @@ class Evaluator:
             for perturb in perturbations:
                 # define subset of storage data for plotting
                 plot_data = loss_data.loc[
-                    (self.storage["Perturbation"] == perturb), :
-                ]
+                            (self.storage["Perturbation"] == perturb), :
+                            ]
                 plot = sb.lineplot(
-                    x = plot_data["Epsilon"], y = plot_data["Value"]
+                    x=plot_data["Epsilon"], y=plot_data["Value"]
                 )
-                plot.set(ylim = (
-                     loss_min - border,
-                     loss_max + border
+                plot.set(ylim=(
+                    loss_min - border,
+                    loss_max + border
                 ))
                 plot_dict[loss][perturb] = plot
                 # save plot to foldersystem
@@ -189,9 +188,8 @@ class Evaluator:
 
         return plot_dict
 
-
     def reliability_diagram(
-        self, perturbation=None, epsilon=None, bins_calibration=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+            self, perturbation=None, epsilon=None, bins_calibration=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     ):
         """
         storage - evaluator storage object
@@ -200,20 +198,20 @@ class Evaluator:
 
         if perturbation is not None:
             storage = storage.loc[
-                (storage["Perturbation"] == perturbation), :
-            ]
+                      (storage["Perturbation"] == perturbation), :
+                      ]
 
         if epsilon is not None:
             storage = storage.loc[
-                (storage["Epsilon"] == epsilon), :
-            ]
+                      (storage["Epsilon"] == epsilon), :
+                      ]
 
         conf_score_df = storage.loc[
-            (storage["Loss_type"] == "confidence_scores"), :
-        ]
+                        (storage["Loss_type"] == "confidence_scores"), :
+                        ]
         matches_df = storage.loc[
-            (storage["Loss_type"] == "matches"), :
-        ]
+                     (storage["Loss_type"] == "matches"), :
+                     ]
         probability_vec_test = conf_score_df["Value"]
         match_vec_test = matches_df["Value"]
 
@@ -225,17 +223,16 @@ class Evaluator:
 
         calibration_bar_chart(prob_binned, accs_binned[::-1])
 
-
     def generate_boxplots(
-        self, perturbation=None, loss_type=None, path="./"
+            self, perturbation=None, loss_type=None, path="./"
     ):
         """
         Creates a nested dictionary of seaborn plot objects
         based on the storage data frame.
         The figures are additionally stored in a folder system.
-        :param x_axis: String, column name used for the x axis
-        :param y_axis: String, column name used for the y axis
         :param perturbation: String, name of the perturbation to select on
+        :param loss_type: String or list, name or list of names of the loss type to select on
+        :param path: String, path to save the generated plots
         :return: Nested dictionary of seaborn plot objects,
         first level: perturbation types, second level: loss types
         """
@@ -260,8 +257,8 @@ class Evaluator:
 
             # calculating the plot limits
             loss_data = self.storage.loc[
-                (self.storage["Loss_type"] == loss), :
-            ]
+                        (self.storage["Loss_type"] == loss), :
+                        ]
             loss_min = loss_data.min()["Value"]
             loss_max = loss_data.max()["Value"]
             border = 0.05 * (loss_max - loss_min)
@@ -269,12 +266,12 @@ class Evaluator:
             for perturb in perturbations:
                 # define subset of storage data for plotting
                 plot_data = loss_data.loc[
-                    (self.storage["Perturbation"] == perturb), :
-                ]
+                            (self.storage["Perturbation"] == perturb), :
+                            ]
                 plot = sb.boxplot(
-                    x = plot_data["Epsilon"], y = plot_data["Value"]
+                    x=plot_data["Epsilon"], y=plot_data["Value"]
                 )
-                plot.set(ylim = (
+                plot.set(ylim=(
                     loss_min - border,
                     loss_max + border
                 ))
@@ -298,23 +295,23 @@ class Evaluator:
         )
 
     def freq_plot(
-        self, perturbation=None, epsilon=None, bins_calibration=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+            self, perturbation=None, epsilon=None, bins_calibration=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     ):
         storage = self.storage
 
         if perturbation is not None:
             storage = storage.loc[
-                (storage["Perturbation"] == perturbation), :
-            ]
+                      (storage["Perturbation"] == perturbation), :
+                      ]
 
         if epsilon is not None:
             storage = storage.loc[
-                (storage["Epsilon"] == epsilon), :
-            ]
+                      (storage["Epsilon"] == epsilon), :
+                      ]
 
         conf_score_df = storage.loc[
-            (storage["Loss_type"] == "confidence_scores"), :
-        ]
+                        (storage["Loss_type"] == "confidence_scores"), :
+                        ]
 
         frequency_over_calibration(
             conf_score_df["Value"],
@@ -329,8 +326,8 @@ class Evaluator:
 
         if perturbation is not None:
             storage = storage.loc[
-                (storage["Perturbation"] == perturbation), :
-            ]
+                      (storage["Perturbation"] == perturbation), :
+                      ]
 
         eces = storage.loc[
             (storage.Loss_type == "ECE"),
@@ -349,8 +346,8 @@ class Evaluator:
 
         if perturbation is not None:
             storage = storage.loc[
-                (storage["Perturbation"] == perturbation), :
-            ]
+                      (storage["Perturbation"] == perturbation), :
+                      ]
 
         eces = storage.loc[
             (storage.Loss_type == "accuracy"),
@@ -372,12 +369,12 @@ class Evaluator:
 
         if perturbation is not None:
             storage = storage.loc[
-                (storage["Perturbation"] == perturbation), :
-            ]
+                      (storage["Perturbation"] == perturbation), :
+                      ]
 
         storage = storage.loc[
-            (storage["Loss_type"] == Loss_type), :
-        ]
+                  (storage["Loss_type"] == Loss_type), :
+                  ]
 
         sb_plot = sb.boxplot(
             x=storage["Epsilon"], y=storage["Value"]
@@ -385,9 +382,8 @@ class Evaluator:
 
         return sb_plot
 
-
     def lineplot(
-        self, loss_type_x, loss_type_y, perturbation=None, epsilon=None
+            self, loss_type_x, loss_type_y, perturbation=None, epsilon=None
     ):
         """
         Creates a lineplot with error bars.
@@ -401,13 +397,13 @@ class Evaluator:
 
         if perturbation is not None:
             storage = storage.loc[
-                (storage["Perturbation"] == perturbation), :
-            ]
+                      (storage["Perturbation"] == perturbation), :
+                      ]
 
         if epsilon is not None:
             storage = storage.loc[
-                (storage["Epsilon"] == epsilon), :
-            ]
+                      (storage["Epsilon"] == epsilon), :
+                      ]
 
         xs = storage.loc[storage["Loss_type"] == loss_type_x, :].Value
         ys = storage.loc[storage["Loss_type"] == loss_type_y, :]
@@ -421,20 +417,19 @@ class Evaluator:
 
         return sb.lineplot(x="x", y="y", data=plot_data)
 
-
     def binned_plot(self, binned_loss, perturbation=None, epsilon=None):
 
         storage = self.storage
 
         if perturbation is not None:
             storage = storage.loc[
-                (storage["Perturbation"] == perturbation), :
-            ]
+                      (storage["Perturbation"] == perturbation), :
+                      ]
 
         if epsilon is not None:
             storage = storage.loc[
-                (storage["Epsilon"] == epsilon), :
-            ]
+                      (storage["Epsilon"] == epsilon), :
+                      ]
 
         subset = storage.loc[
             (storage.Loss_type == binned_loss),
@@ -453,8 +448,8 @@ class Evaluator:
 
         if perturbation is not None:
             storage = storage.loc[
-                (storage["Perturbation"] == perturbation), :
-            ]
+                      (storage["Perturbation"] == perturbation), :
+                      ]
 
         subset = storage.loc[
             (storage.Loss_type == "ranges"),
@@ -479,13 +474,13 @@ class Evaluator:
 
         if perturbation is not None:
             storage = storage.loc[
-                (storage["Perturbation"] == perturbation), :
-            ]
+                      (storage["Perturbation"] == perturbation), :
+                      ]
 
         if epsilon is not None:
             storage = storage.loc[
-                (storage["Epsilon"] == epsilon), :
-            ]
+                      (storage["Epsilon"] == epsilon), :
+                      ]
 
         subset = storage.loc[
             (storage.Loss_type == loss_type),

@@ -18,7 +18,7 @@ class Imagenet_corrupted:
             model="ResNet50",
             **kwargs
     ):
-        '''
+        """
         load IMAGENET2012 corrupted dataset (BGR, minus mean, center crop) and
         prepare it as a tf.data object.
         Args:
@@ -32,7 +32,7 @@ class Imagenet_corrupted:
         data_path: string, path to corrupted imagenet dataset
         download: bool, True if dataset is downloaded
         model: string, model name (determines preprocessing)
-        '''
+        """
 
         self.data_name = "IMAGENET_corrupted"
         self.corruption_type = corruption_type
@@ -53,7 +53,7 @@ class Imagenet_corrupted:
 
     def load_data(self):
         print("loading %s data..." % (self.data_name))
-        assert self.corruption_type != None, "Error: epsilon must be greater than 0"
+        assert self.corruption_type is not None, "Error: epsilon must be greater than 0"
         assert self.epsilon > 0, "Error: epsilon must be greater than 0"
         corrupt_data_name = self.corruption_type + '_' + str(self.epsilon)
         self.test_dataset, info = tfds.load(
@@ -72,7 +72,7 @@ class Imagenet_corrupted:
                                         max_attempts=100,
                                         scope=None):
             """
-            Adpted from:
+            Adopted from:
             https://github.com/google-research/google-research/blob/
             master/uq_benchmark_2019/imagenet/resnet_preprocessing.py (11-22-2020)
 
@@ -122,7 +122,7 @@ class Imagenet_corrupted:
 
         def _at_least_x_are_equal(a, b, x):
             """
-            Adpted from:
+            Adopted from:
             https://github.com/google-research/google-research/blob/
             master/uq_benchmark_2019/imagenet/resnet_preprocessing.py (11-22-2020)
 
@@ -134,7 +134,7 @@ class Imagenet_corrupted:
 
         def center_crop_and_resize(image):
             """
-            Adpted from:
+            Adopted from:
             https://github.com/google-research/google-research/blob/
             master/uq_benchmark_2019/imagenet/resnet_preprocessing.py (11-22-2020)
 
@@ -165,7 +165,7 @@ class Imagenet_corrupted:
 
         def random_crop_and_resize(image):
             """
-            Adpted from:
+            Adopted from:
             https://github.com/google-research/google-research/blob/
             master/uq_benchmark_2019/imagenet/resnet_preprocessing.py (11-22-2020)
 
@@ -192,7 +192,7 @@ class Imagenet_corrupted:
 
         def preprocess_for_eval(image):
             """
-            Adpted from:
+            Adopted from:
             https://github.com/google-research/google-research/blob/
             master/uq_benchmark_2019/imagenet/resnet_preprocessing.py (11-22-2020)
 

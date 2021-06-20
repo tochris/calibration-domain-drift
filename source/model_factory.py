@@ -11,6 +11,7 @@ from .utils.plotutils import (
     load_dict_from_pkl,
 )
 
+
 class ModelFactory:
     """
     A template for pre-defined classifier models.
@@ -51,7 +52,6 @@ class ModelFactory:
              bool_load=False,
              compile=True,
              load_logits=False,
-             #params_load={},
              **kwargs):
         """
         Loads the model either from load_path or from tf.keras
@@ -61,7 +61,6 @@ class ModelFactory:
         load_logits: bool, if True logits are loaded from file, otherwise
             they are computed
         """
-        #params_load={},
 
         if not bool_load:
             if self.architecture == "ResNet50":
@@ -131,6 +130,7 @@ class ModelFactory:
         tf_test_step_logits()
         return log_dict
 
+    # noinspection PyDictCreation
     def test(
             self,
             dataset,

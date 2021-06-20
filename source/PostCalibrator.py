@@ -29,11 +29,9 @@ class PostCalibrator:
     #         function, which does not make sense from the user perspective.
     #         (the user wants to load an old instance by only specifying "path")
 
-
     def __init__(
         self,
         calib_model,
-        #loss_func,
         model_factory,
         perturb_generator,
         data_name="Data",
@@ -53,7 +51,6 @@ class PostCalibrator:
             method.
         """
         self.calib_model = calib_model
-        #self.loss_func = loss_func
         self.evaluator = Evaluator()
 
         self.model_factory = model_factory
@@ -68,7 +65,6 @@ class PostCalibrator:
             # extract model name with parameters
             os.path.split(os.path.split(self.model_factory.save_path)[0])[1],
             self.calib_model.folder,
-            #self.loss_func.__name__
         )
 
     def tune(
@@ -86,12 +82,12 @@ class PostCalibrator:
             batch_size, shuffle etc.
         :param tuning_perturb: bool, if True gaussian perturbation approach is used
         :param epsilons: [int], level of perturbation (higher = more extreme)
-        :from_cache: bool, whether logits are read from cache
-        :from_cache: bool, whether logits are written to cache
-        :from_cache: bool, whether logits are stored in a file
+        :param from_cache: bool, whether logits are read from cache
+        :param to_cache: bool, whether logits are written to cache
+        :param save_to_file bool, whether logits are stored in a file
         """
 
-        if tuning_perturb == True:
+        if tuning_perturb is True:
             perturb_type = "general_gaussian_noise"
             epsilons = epsilons
         else:
@@ -116,13 +112,6 @@ class PostCalibrator:
         # all our tuneable losses return list of length 1, so we index
         # that value
 
-        # if self.calib_model.folder in ["TS",
-        #     "ETS",
-        #     "IRM",
-        #     "IROVA",
-        #     "IROVATS",
-        #     "PBMC",]:
-
         logits = []
         labels = []
         for logits_e, labels_e in logits_labels_eps:
@@ -130,29 +119,10 @@ class PostCalibrator:
             labels.append(labels_e)
         logits = np.concatenate(logits)
         labels = np.concatenate(labels)
-        #print('logits: ', np.shape(logits))
-        #print('labels: ', np.shape(labels))
+
         result = self.calib_model.optimize(logits,labels)
         self.tuning_result = result
 
-        # else:
-        #     loss_theta = lambda theta: \
-        #         np.mean([
-        #             self.loss_func(
-        #                 self.calib_model.function(logits, theta),
-        #                 labels,
-        #             )[0] for logits, labels in logits_labels_eps
-        #         ])
-        #     result = minimize(
-        #         loss_theta,
-        #         self.calib_model.theta,
-        #         method="nelder-mead",
-        #         options={"maxfev": maxfev},
-        #     )
-        #     # update the theta parameter with the tuning result
-        #     self.calib_model.setTheta(result["x"])
-        #     # store result for possible manual checking
-        #     self.tuning_result = result
         print("Tuned Parameters: ", self.calib_model.theta)
 
     def evaluate(
@@ -187,14 +157,11 @@ class PostCalibrator:
             to_cache=to_cache,
             save_to_file=save_to_file
         )
-
-        # loss( f(x, theta), truth)
         eval_values = test_metric(
             self.calib_model.function(logits, self.calib_model.theta),
             labels
         )
         # extend evaluator storage with
-        # {perturb_type: {epsilon: {test_metric_name: test_metric_values}}}
         perturb_type = perturb_type.replace('/', '_')
         self.evaluator.add(
             test_metric.__name__,
@@ -202,7 +169,6 @@ class PostCalibrator:
             epsilon,
             eval_values
         )
-        #print(test_values)
 
     def predict(self,
                 data,
@@ -252,41 +218,3 @@ class PostCalibrator:
         self.evaluator = Evaluator()
         self.model_factory.logits_test = {}
         self.model_factory.labels_test = {}
-
-    # def load(self, folder_path=None):
-    #     """
-    #     Method to load the calib model parameters and the evaluation storage
-    #     object from a file path.
-    #     The file path will be appended by two levels: calib model and loss func
-    #     :param folder_path: string, should not be defined here, but instead
-    #     at the class instance initialization.
-    #     """
-    #     if folder_path is None:
-    #         folder_path = self.folder_path
-    #
-    #     self.calib_model.load(folder_path)
-    #     self.evaluator.load(folder_path)
-
-    # def generate_plots(self, folder_path=None, **kwargs):
-    #     """
-    #     Method to generate several plots at once.
-    #     The plots will be returned, but also stored to a folder system under
-    #     the given folder path.
-    #     Currently only line plots will be generated, but this can easily
-    #     be extended in the Evaluator class.
-    #     :param folder_path: string, should not be defined here, but instead
-    #     at the class instance initialization.
-    #     :return: Nested dictionary of seaborn plot objects
-    #     """
-    #     if folder_path is None:
-    #         folder_path = self.folder_path
-    #
-    #     plots = {
-    #         "lineplots": self.evaluator.generate_lineplots(
-    #             path=folder_path, **kwargs
-    #         ),
-    #         "boxplots": self.evaluator.generate_boxplots(
-    #             path=folder_path, loss_type="confidence_scores", **kwargs
-    #         )
-    #     }
-    #     return plots

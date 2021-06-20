@@ -21,6 +21,7 @@ def accuracy(logits, labels):
 
     return [np.mean(match)]
 
+
 def brier_score(logits, labels):
     """
     Calculate brier score of two NxD matrices.
@@ -44,6 +45,7 @@ def brier_score(logits, labels):
     brier_scores = [brier_score_loss(label, prob) for label, prob in lp_pairs]
     # sum over all dimensions
     return [np.sum(brier_scores)]
+
 
 def neg_log_likelihood(logits, labels):
     """
@@ -117,6 +119,7 @@ def ECE(logits, labels):
     )
     return [ece]
 
+
 def vuc_ECE(logits, labels):
     """
     Calculate the CE (Verified Uncertainty Paper) of given logits and labels.
@@ -134,6 +137,7 @@ def vuc_ECE(logits, labels):
 
     return [calibration_error]
 
+
 def confidence_scores(logits, labels=None):
     """
     Evaluation metric.
@@ -148,6 +152,7 @@ def confidence_scores(logits, labels=None):
     probs = np.clip(probs, 1.17e-37, 3.40e37)
     return np.max(probs, axis=1)
 
+
 def matches(logits, labels):
     """
     Evaluation metric.
@@ -161,6 +166,7 @@ def matches(logits, labels):
     pred = np.argmax(logits, axis=1)
     truth = np.argmax(labels, axis=1)
     return np.equal(pred, truth)
+
 
 def mean_entropy(logits, labels=None):
     """
