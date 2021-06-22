@@ -7,7 +7,7 @@ sys.path.append("..")
 import source.data.cifar10 as cifar10
 import source.data.imagenet as imagenet
 import source.data.objectnet as objectnet
-import source.postevaluation.data_refiner
+import source.postevaluation.data_refiner as data_refiner
 from source.model_factory import ModelFactory
 from source.PostCalibrator import PostCalibrator
 from source.perturbation_generator import PerturbationGenerator
@@ -114,7 +114,7 @@ def run_experiment(settings):
         )
 
         # store levels of perturbation
-        store_epsilons(
+        data_refiner.store_epsilons(
             model_path,
             epsilons, modelf,
             dataset_valid.valid_ds,

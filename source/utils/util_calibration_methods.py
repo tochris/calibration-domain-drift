@@ -237,8 +237,8 @@ def train_irovats(logits, labels, loss="mse"):
 Calibration:
 Input: uncalibrated logits, temperature (and weight)
 Output: calibrated prediction probabilities
+Applies for all below functions
 """
-
 
 # Calibration: Temperature Scaling
 def calibrate_temperature_scaling(logits, t):

@@ -1,12 +1,5 @@
-import tensorflow as tf
 import numpy as np
-import os
-from scipy.stats import entropy
-from scipy.special import softmax
-from netcal.scaling import LogisticCalibration
-from netcal.binning import HistogramBinning
-from ..postevaluation.utils_vuc_clibration import PlattBinnerMarginalCalibrator
-from ..postevaluation.util_calibration_methods import \
+from source.utils.util_calibration_methods import \
     train_temperature_scaling, \
     train_ensemble_temperature_scaling, \
     train_isotonic_regression, \

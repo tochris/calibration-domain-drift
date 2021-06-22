@@ -12,6 +12,15 @@ class CIFAR10:
             data_path="./",
             **kwargs
     ):
+        """
+        load CIFAR10 datasetand prepare it as a tf.data object.
+        Args:
+        train_batch_size: int
+        valid_batch_size: int
+        test_batch_size: int
+        shuffle_buffer: int, tf.data specific shuffle buffer
+        data_path: string, path to corrupted imagenet dataset
+        """
         self.data_name = "CIFAR10"
         self.data_path = data_path
 

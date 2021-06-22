@@ -14,7 +14,6 @@ def accuracy(logits, labels):
     :param labels: Float array, outer list = samples, inner list = 1 hot labels
     :return: [Float] of length 1
     """
-
     pred = np.argmax(logits, axis=1)
     truth = np.argmax(labels, axis=1)
     match = np.equal(pred, truth)

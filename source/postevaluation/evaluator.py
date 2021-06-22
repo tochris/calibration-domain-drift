@@ -13,7 +13,6 @@ class Evaluator:
     Class for test result storage and further methods for evaluation of that.
     Storage is a pandas dataframe of test metric results.
     """
-
     def __init__(self):
         self.storage = pd.DataFrame(
             columns=["Loss_type", "Index", "Perturbation", "Epsilon", "Value"]
@@ -289,11 +288,6 @@ class Evaluator:
 
         return plot_dict
 
-    def class_prob_plot():
-        class_probabilities(
-            class_prob_vec_step,
-        )
-
     def freq_plot(
             self, perturbation=None, epsilon=None, bins_calibration=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     ):
@@ -469,7 +463,6 @@ class Evaluator:
         return sb.boxplot(x="x", y="y", data=plot_data)
 
     def dist_plot(self, loss_type, perturbation=None, epsilon=None, **kwargs):
-
         storage = self.storage
 
         if perturbation is not None:
