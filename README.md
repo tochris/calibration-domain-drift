@@ -68,13 +68,15 @@ The python source code for all the class systems implemented in this project.
 
 If you find this library useful please consider citing our paper:
 ```
-@inproceedings{tomani2021domaindriftcalibration,
-    author = "Christian Tomani and Sebastian Gruber and Muhammed Ebrar Erdem and Daniel Cremers and Florian Buettner",
-    title = "Post-hoc Uncertainty Calibration for Domain Drift Scenarios",
-    booktitle = cvpr,
-    year = "2021",
-    award = "Oral Presentation"
-  }
+@InProceedings{Tomani_2021_CVPR,
+    author    = {Tomani, Christian and Gruber, Sebastian and Erdem, Muhammed Ebrar and Cremers, Daniel and Buettner, Florian},
+    title     = {Post-Hoc Uncertainty Calibration for Domain Drift Scenarios},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+    month     = {June},
+    year      = {2021},
+    pages     = {10124-10132}
+    award     = "Oral Presentation"
+}
 ```
 
 ## References:
