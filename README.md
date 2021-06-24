@@ -9,21 +9,21 @@ ImageNet datasets are subject to special distributional rights. Thus, they need 
 
 ## Tuning & Evaluation
 
-All post-hoc models can be tuned as well as evaluated with the `scripts/run_experiments.py` script. A path to a pre-trained classifier needs to be provided.
+All post-hoc models can be tuned as well as evaluated with `scripts/run_experiments.py`. A path to a pre-trained classifier needs to be provided.
 
 The evaluated metrics are stored in evaluator_storage.pkl and these results can be visualized with `scripts/plotting_experiments.ipynb`
 
 The proposed gaussian data refiner strategy is implemented in:
 
-`source/postevaluation/data_refiner.py` \\ \\
+`source/postevaluation/data_refiner.py` <br/> <br/>
 
 
 When calling `scripts/run_experiments.py` you can use to following arguments:
 
-**Settings**
-    The following settings are implemented as an example in `scripts/run_experiments.py`. Other settings can be implemented as well. \\
-    `-settings IMAGENET_ResNet50_InD`: ResNet50 classifier for ImageNet trained on in-domain data without data refiner strategy. \\
-    `-settings IMAGENET_ResNet50_OOD!!!_GN`: ResNet50 classifier for ImageNet trained on in-domain data with data refiner strategy. \\
+**Settings:**\
+    The following settings are implemented as an example in `scripts/run_experiments.py`. Other settings can be implemented as well. <br/>
+    `-settings IMAGENET_ResNet50_InD`: ResNet50 classifier for ImageNet trained on in-domain data without data refiner strategy. <br/>
+    `-settings IMAGENET_ResNet50_OOD!!!_GN`: ResNet50 classifier for ImageNet trained on in-domain data with data refiner strategy. <br/>
 
 **The following post-hoc models can be tuned:**\
     `-calib_models BaseModel`: Basic model without any calibration\
@@ -34,18 +34,18 @@ When calling `scripts/run_experiments.py` you can use to following arguments:
     `-calib_models IROVATSModel`: Isotonic Regression with Temperature Scaling (Zhang et al., 2020)\
 
 **Additional command line arguments:**\
-    `--model_path`: path to classifier model
-    `--folder_path_save`: Specify where the model is stored and loaded from
-    `--perturb_levels`: number of perturbation levels for tuning
+    `--model_path`: path to classifier model\
+    `--folder_path_save`: Specify where the model is stored and loaded from\
+    `--perturb_levels`: number of perturbation levels for tuning\
 
     In case of ImageNet:
-    `--path_data_imagenet`: path to ImageNet dataset
-    `--path_data_objectnet`: path to ObjectNet dataset
-    `--path_data_imagenet_corrupted`: path to corrupted ImageNet dataset
+    `--path_data_imagenet`: path to ImageNet dataset\
+    `--path_data_objectnet`: path to ObjectNet dataset\
+    `--path_data_imagenet_corrupted`: path to corrupted ImageNet dataset\
 
 ## Folder structure
 
-The repository is structured with the following folders.
+The repository is structured with the following folders:
 
 ### scripts
 
@@ -59,9 +59,9 @@ The python source code for all the class systems implemented in this project.
 `source/postevalutation`: All scripts for post-hoc calibration. \
 `source/utils`: Utility functions that are used in the scripts.
 
-`source/PostCalibrator.py`: Class that handels post-hoc calibration of models.\
-`source/generator.py`: Preprocesses data.\
-`source/model_factory.py`: Class that handels training and prediction.
+`source/PostCalibrator.py`: Class that handles post-hoc calibration of models.\
+`source/perturbation_generator.py`: Class that preprocesses data.\
+`source/model_factory.py`: Class that handles training and prediction.\
 
 
 ## Citation:
