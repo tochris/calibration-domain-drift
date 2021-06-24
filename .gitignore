@@ -1,0 +1,5 @@
+*.DS_Store
+*.pyc
+results/
+scripts/temp_run.sh
+*.ipynb_checkpoints
