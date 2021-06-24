@@ -23,7 +23,7 @@ When calling `scripts/run_experiments.py` you can use to following arguments:
 **Settings:**\
     The following settings are implemented as an example in `scripts/run_experiments.py`. Other settings can be implemented as well. <br/>
     `-settings IMAGENET_ResNet50_InD`: ResNet50 classifier for ImageNet trained on in-domain data without data refiner strategy. <br/>
-    `-settings IMAGENET_ResNet50_OOD!!!_GN`: ResNet50 classifier for ImageNet trained on in-domain data with data refiner strategy. <br/>
+    `-settings IMAGENET_ResNet50_OOD_GN`: ResNet50 classifier for ImageNet trained on in-domain data with data refiner strategy. <br/>
 
 **The following post-hoc models can be tuned:**\
     `-calib_models BaseModel`: Basic model without any calibration\
