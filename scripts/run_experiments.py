@@ -41,8 +41,13 @@ def run_experiment(settings):
     """
     Run data refiner, calibrate model and evaluate model on data under domain drift
     Args:
-        settings: dictionary with arguments
+        settings: dictionary with keys 'tuning_perturb', 'perturb_levels',
+            'perturbations', 'cms', 'data_name', 'test_name', 'model_class',
+            'model_path', 'model_load', 'path_data_imagenet', 'path_data_objectnet',
+            'path_data_imagenet_corrupted'
     """
+
+    # catch variables from settings dictionary
     tuning_perturb = settings["tuning_perturb"]
     perturb_levels = settings["perturb_levels"]
     perturbations = settings["perturbations"]
@@ -57,6 +62,7 @@ def run_experiment(settings):
     path_data_imagenet_corrupted = settings["path_data_imagenet_corrupted"]
 
     folder_path_save = settings["folder_path_save"]
+    # load model factory, validation set, test set
     modelf, dataset_valid, dataset_test = load_modelf_dataset(
         model_class,
         model_path,
@@ -72,7 +78,7 @@ def run_experiment(settings):
     elif data_name in ["Imagenet", "Objectnet_not_imagenet", "Objectnet_only_imagenet"]:
         n_classes = 1000
 
-    #calculate number of perturbation levels
+    # calculate number of perturbation levels
     if perturb_levels == 1:
         tuning_eps = [0]
     elif perturb_levels > 1:
@@ -81,8 +87,8 @@ def run_experiment(settings):
         ValueError: "perturb_levels must be > 0!"
 
     if tuning_perturb == True:
-        #adjust parameters for data sets and models
-        #(depending on respective preprocessing of data)
+        # adjust parameters for data sets and models
+        # (depending on respective preprocessing of data)
         if data_name in ["Imagenet", "Objectnet_not_imagenet", "Objectnet_only_imagenet"]:
             if model_class in ["DenseNet169","Xception","MobileNetV2"]:
                 gauss_eps_start = 0.0005
@@ -94,7 +100,7 @@ def run_experiment(settings):
             gauss_eps_start = 0.1
             opt_delta_gauss_eps = 0.5
 
-        #optimize levels of perturbation (=epsilons)
+        # optimize levels of perturbation (=epsilons)
         epsilons = data_refiner.estimate_epsilons(
             modelf,
             dataset_valid.valid_ds,
@@ -106,14 +112,14 @@ def run_experiment(settings):
             opt_delta_gauss_eps=opt_delta_gauss_eps
         )
 
-        #initialize perturbation generator with opimal levels of perturbation
+        # initialize perturbation generator with opimal levels of perturbation
         perturb_generator = PerturbationGenerator(
             dataset=dataset_test,
             dataset_name=data_name,
             gaussian_noise_eps=epsilons
         )
 
-        #store levels of perturbation
+        # store levels of perturbation
         data_refiner.store_epsilons(
             model_path,
             epsilons, modelf,
@@ -123,12 +129,13 @@ def run_experiment(settings):
         )
 
     else:
-        #initialize perturbation generator without opimal levels of perturbation
+        # initialize perturbation generator without opimal levels of perturbation
         perturb_generator = PerturbationGenerator(
             dataset=dataset_test,
             dataset_name=data_name
         )
 
+    # iterate post calibration tuning over all given calibration models
     for calib_model in calib_models:
         # create calibration instance
         pc = PostCalibrator(
@@ -176,7 +183,7 @@ def run_experiment(settings):
                         to_cache=True,
                         save_to_file=False,
                     )
-
+        # save post calibrator attributes (model, ...) after tuning
         pc.save()
 
     if data_name not in ["Objectnet_not_imagenet", "Objectnet_only_imagenet"]:
@@ -205,6 +212,7 @@ def load_modelf_dataset(model_class,
         data_test: tf.data.Dataset object (x_data, y_labels), prepared with
             batch_size, shuffle etc.
     '''
+    # handle different datasets
     if data_name == "CIFAR":
         data_valid = data_test = cifar10.CIFAR10(train_batch_size=100)
     elif data_name == "Imagenet":
@@ -222,11 +230,12 @@ def load_modelf_dataset(model_class,
                                         model=model_class)
         data_valid = imagenet.Imagenet(data_path=path_data_imagenet,
                                        model=model_class)
-    # Load Model
+
     if data_name in ["Imagenet", "CIFAR"]:
         load_logits = True
     elif data_name in ["Objectnet_not_imagenet", "Objectnet_only_imagenet"]:
         load_logits = False
+    # Init and load Model factory with model
     modelf = ModelFactory(model_class, save_path_general=model_path,
                                       data_corrupted_path=path_data_imagenet_corrupted)
     modelf.load(bool_load=model_load, load_path=model_path, load_logits=load_logits)
@@ -234,12 +243,14 @@ def load_modelf_dataset(model_class,
 
     return modelf, data_valid, data_test
 
+
 def ifValueNotNone(default, value):
     """Helper function for argument parser"""
     if value is not None:
         return value
     else:
         return default
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate models")
@@ -317,15 +328,15 @@ if __name__ == "__main__":
         # Imagenet ResNet50
         ##In Domain Training
         "IMAGENET_ResNet50_InD": {
-            "model_class": "ResNet50",
+            "model_class": "ResNet50", # model architecture
             "model_path": folder_path_save,  # path to classifier
             "model_load": False, # whether the post-hoc tuning model should be loaded
-            "data_name": "Imagenet",
+            "data_name": "Imagenet", # name of dataset
             "cms": [BaseModel(), TSModel(), TSModel(), ETSModel(), IRMModel(),
-                    IROVAModel(), IROVATSModel()],
-            "tuning_perturb": False,
-            "perturb_levels": perturb_levels, #number of pertrubation levels (epsilons)
-            "perturbations": perturbations_imagenet,
+                    IROVAModel(), IROVATSModel()], # calibration models
+            "tuning_perturb": False, # whether to use perturbations for tuning
+            "perturb_levels": perturb_levels, # number of pertrubation levels (epsilons)
+            "perturbations": perturbations_imagenet, # list of perturbations
             "test_name": "test_ds",
             "folder_path_save": ifValueNotNone("../results/Calibration_indomain",
                                                 folder_path_save),
